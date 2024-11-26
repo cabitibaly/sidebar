@@ -9,6 +9,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/outline"
 import logo from "../assets/logo.png"
+import PropTypes from "prop-types"
 
 const containerVariants = {
   close: {
@@ -38,16 +39,17 @@ const svgVariants = {
   },
 }
 
-const Navigation = () => {
-  const [isOpen, setIsOpen] = useState(false)
+const Navigation = ({ visible, screenWidth }) => {
+  const [isOpen, setIsOpen] = useState(visible)
+  const [isVisible, setIsVisible] = useState(visible);
 
   const containerControls = useAnimationControls()
   const svgControls = useAnimationControls()
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen ) {
       containerControls.start("open")
-      svgControls.start("open")
+      svgControls.start("open")      
     } else {
       containerControls.start("close")
       svgControls.start("close")
@@ -55,8 +57,11 @@ const Navigation = () => {
   }, [isOpen])
 
   const handleOpenClose = () => {
+    setIsVisible(false)
     setIsOpen(!isOpen)
   }
+
+  console.log(isVisible)
 
   return (
     <>
@@ -64,7 +69,7 @@ const Navigation = () => {
         variants={containerVariants}
         animate={containerControls}
         initial="close"
-        className="bg-neutral-900 flex flex-col z-10 gap-20 p-5 absolute top-0 left-0 h-full shadow shadow-neutral-600"
+        className={`bg-neutral-900 flex flex-col z-10 gap-20 p-5 absolute top-0 left-0 h-full shadow shadow-neutral-600 ${screenWidth < 800 && isVisible === false  ? "hidden" : ""}`}
       >
         <div className="border border-red-300 flex flex-row w-full justify-between place-items-center">
           <img src={logo} alt="logo" className={`h-12 object-cover ${isOpen ? "block" : "hidden"}`} />
@@ -114,6 +119,11 @@ const Navigation = () => {
       </motion.nav>
     </>
   )
+}
+
+Navigation.propTypes = {
+  visible: PropTypes.bool,
+  screenWidth: PropTypes.number,
 }
 
 export default Navigation
