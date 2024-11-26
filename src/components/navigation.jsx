@@ -1,5 +1,5 @@
 import { motion, useAnimationControls } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import NavigationLink from "./NavigationLink"
 import {
   ChartBarIcon,
@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline"
 import logo from "../assets/logo.png"
 import PropTypes from "prop-types"
+import VisibleContext from "../contexts/visibleContext"
 
 const containerVariants = {
   close: {
@@ -39,9 +40,9 @@ const svgVariants = {
   },
 }
 
-const Navigation = ({ visible, screenWidth }) => {
-  const [isOpen, setIsOpen] = useState(visible)
-  const [isVisible, setIsVisible] = useState(visible);
+const Navigation = () => {
+  const { visible, screenWidth, handleVisible } = useContext(VisibleContext);
+  const [isOpen, setIsOpen] = useState(visible) 
 
   const containerControls = useAnimationControls()
   const svgControls = useAnimationControls()
@@ -57,11 +58,11 @@ const Navigation = ({ visible, screenWidth }) => {
   }, [isOpen])
 
   const handleOpenClose = () => {
-    setIsVisible(false)
+    if (screenWidth < 800) {
+      handleVisible(false)
+    }
     setIsOpen(!isOpen)
   }
-
-  console.log(isVisible)
 
   return (
     <>
@@ -69,7 +70,7 @@ const Navigation = ({ visible, screenWidth }) => {
         variants={containerVariants}
         animate={containerControls}
         initial="close"
-        className={`bg-neutral-900 flex flex-col z-10 gap-20 p-5 absolute top-0 left-0 h-full shadow shadow-neutral-600 ${screenWidth < 800 && isVisible === false  ? "hidden" : ""}`}
+        className={`bg-neutral-900 flex flex-col z-10 gap-20 p-5 absolute top-0 left-0 h-full shadow shadow-neutral-600 ${screenWidth < 800 && visible === false  ? "hidden" : ""}`}
       >
         <div className="border border-red-300 flex flex-row w-full justify-between place-items-center">
           <img src={logo} alt="logo" className={`h-12 object-cover ${isOpen ? "block" : "hidden"}`} />
